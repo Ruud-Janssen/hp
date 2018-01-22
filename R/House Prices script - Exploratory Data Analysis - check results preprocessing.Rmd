@@ -1,0 +1,44 @@
+# Plotting all data using tabplots
+
+Objective: find out some of the good features visually =)
+
+```{r, fig.width = 11, fig.height = 5.5, echo = FALSE, message = FALSE, warning = FALSE}
+invisible(library(tabplot))
+invisible(library(data.table))
+
+columns <- c(
+             rep("character", 2),
+             rep("numeric", 2),
+             rep("character", 10),
+             rep("numeric", 4),
+             rep("character", 5),
+             "numeric",
+             rep("character", 1), #foundation
+             rep("numeric", 4),
+             rep("character", 3),
+             rep("numeric", 12),
+             rep("character", 1), #GarageType
+             rep("numeric", 9),
+             rep("character", 2),
+             "numeric",
+             rep("character", 2),
+             rep("numeric", 24))
+
+data <- fread("../input/House Prices Kaggle_preprocessed5.csv", data.table = FALSE, header = TRUE, sep = ",", colClasses = columns)
+
+
+
+data <- as.data.frame(data)
+
+for (i in 1:82) {
+  if (typeof(data[, i]) == "character") {
+    data[is.na(data[, i]), i] <- ""
+    data[, i] <- as.factor(data[, i])
+  }
+}
+
+for (i in 1:16) {
+  plot(tableplot(data, select = c(((i - 1) * 5 + 1):(i * 5), 81), sortCol = 1, nBins = 73, plot = FALSE), fontsize = 12, title = paste("log(SalePrice) vs ", paste(colnames(data)[((i - 1) * 5 + 1):(i * 5)], collapse = "+"), sep = ""), showTitle = TRUE, fontsize.title = 12)
+}
+
+```
